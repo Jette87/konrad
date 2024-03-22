@@ -369,3 +369,33 @@ class VshapeT(RelativeHumidityModel):
 
     def __call__(self, atmosphere, **kwargs):
         return self._f(atmosphere["T"][-1])
+
+class CshapeT(RelativeHumidityModel):
+    """
+    Fix the relative humidity to a C-shape in temperature space
+    
+    The C-shape is obtained by fitting a quadratic equation to three points in temperature space: 300K, 190K and the triple point
+    """
+    
+    def __init__(
+            self, 
+            rh_surface=0.8, 
+            rh_trip=0.5,
+            rh_coldpoint=0.8, 
+            T_max=300, 
+            T_trip=273.15,
+            T_coldpoint=190,
+            bottom_fill=None):
+        if not bottom_fill:
+            bottom_fill = rh_surface
+        self._f = interp1d(
+            x=[T_max, T_trip, T_coldpoint],
+            y=[rh_surface, rh_trip, rh_coldpoint],
+            kind='quadratic', fill_value=(rh_coldpoint, bottom_fill), bounds_error=False)
+        
+    def __call__(self, atmosphere, **kwargs):
+        rh = self._f(atmosphere["T"][-1])
+        return rh
+        
+        
+            

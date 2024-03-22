@@ -124,3 +124,18 @@ def vmr2relative_humidity(vmr, pressure, temperature):
         T=temperature,
         e_eq=saturation_pressure,
     )
+
+def integrate_vmr(vmr, pressure):
+    """
+
+    Parameters
+    ----------
+    vmr (float or ndarray): Water vapor volume mixing ratio.
+    pressure (float or ndarray): Pressure [Pa].
+
+    Returns
+    -------
+    float : Integrated Water Vapor [kg / m^2]
+
+    """
+    return typ.integrate_water_vapor(vmr=vmr, p=pressure)
